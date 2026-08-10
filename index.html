@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ótica Herval Select — Relatório Semanal 03-09/08/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--ouro:#E8D44D;--ouro-esc:#A89820;--azul:#4A9AB4;--carvao:#0D0C04;--petroleo:#0D2A36;--offwhite:#F5F2E8;--vermelho:#E05555;--verde:#4CAF7D;--laranja:#E8943A;--cinza:#888;--cinza-claro:#CCCCCC;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--carvao);color:var(--offwhite);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+.cursor-dot{width:8px;height:8px;background:var(--ouro);border-radius:50%;position:fixed;transform:translate(-50%,-50%);transition:transform .1s;pointer-events:none;z-index:9999;}
+.cursor-ring{width:36px;height:36px;border:1.5px solid var(--ouro);border-radius:50%;position:fixed;transform:translate(-50%,-50%);transition:all .18s ease;opacity:.6;pointer-events:none;z-index:9999;}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ouro),var(--azul),var(--verde));z-index:200;transition:width .2s;box-shadow:0 0 12px rgba(232,212,77,.6);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(13,12,4,.92);border-bottom:1px solid rgba(168,152,32,.25);backdrop-filter:blur(16px);}
+.nav-brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:19px;color:var(--ouro-esc);letter-spacing:2px;}
+.nav-dots{display:flex;gap:10px;}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(232,212,77,.2);cursor:pointer;transition:all .3s;border:1px solid transparent;}
+.nav-dot.active{background:var(--ouro);box-shadow:0 0 10px rgba(232,212,77,.7);transform:scale(1.2);}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.45;}
+.slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:110px 72px 72px;position:relative;overflow:hidden;}
+.slide-inner{position:relative;z-index:2;}
+.slide::after{content:'';position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--ouro);z-index:3;}
+.slide.azul-accent::after{background:var(--azul);}
+.slide.bg-petroleo{background:var(--petroleo);}
+.tag{font-family:'DM Sans',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:var(--ouro-esc);}
+h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(96px,14vw,156px);line-height:.9;color:var(--ouro);letter-spacing:1px;}
+h1 em{color:var(--offwhite);font-style:normal;}
+h2{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(46px,6vw,70px);line-height:1.05;color:var(--ouro);}
+.bg-petroleo h2{color:var(--azul);}
+.slide-sub{font-size:34px;color:var(--cinza-claro);font-style:italic;margin-top:8px;line-height:1.4;}
+.divider{height:3px;width:80px;background:var(--ouro-esc);margin:20px 0;}
+.bg-petroleo .divider{background:var(--azul);}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(232,212,77,.35),transparent);animation:scan 5s linear infinite;pointer-events:none;z-index:1;}
+@keyframes scan{from{top:0}to{top:100%}}
+/* CAPA */
+.capa-sub{font-size:31px;color:var(--cinza-claro);font-style:italic;margin-top:14px;}
+.capa-meta{margin-top:52px;display:grid;grid-template-columns:repeat(2,1fr);gap:28px 64px;max-width:700px;}
+.meta-item label{display:block;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:3px;color:var(--ouro-esc);text-transform:uppercase;margin-bottom:6px;}
+.meta-item p{font-size:26px;color:var(--offwhite);}
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:36px 0 28px;}
+.kpi-card{background:#141408;border:1px solid rgba(232,212,77,.15);padding:28px 22px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.23,1,.32,1);}
+.kpi-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--ka,var(--ouro));transform:scaleX(0);transform-origin:left;transition:transform .4s ease;}
+.kpi-card:hover{transform:translateY(-6px);border-color:var(--ka,var(--ouro));box-shadow:0 20px 40px rgba(0,0,0,.4);}
+.kpi-card:hover::before{transform:scaleX(1);}
+.kpi-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:91px;line-height:1;color:var(--ka,var(--ouro));display:block;}
+.kpi-label{font-size:23px;color:var(--offwhite);margin-top:6px;display:block;}
+.kpi-sub{font-size:19px;color:var(--ka,var(--ouro));margin-top:4px;display:block;opacity:.85;}
+/* DIAG BOX */
+.diag-box{background:#141408;border:1px solid rgba(168,152,32,.35);padding:24px 28px;border-left:4px solid var(--ouro-esc);}
+.diag-box strong{font-family:'Rajdhani',sans-serif;font-size:20px;letter-spacing:1px;color:var(--ouro);}
+.diag-box p{font-size:26px;color:var(--offwhite);margin-top:8px;line-height:1.7;}
+/* CANAL CARDS */
+.canal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px;}
+.canal-4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px;}
+.canal-card{background:#141408;border:1px solid rgba(255,255,255,.08);padding:28px 24px;border-top:4px solid var(--cc,var(--ouro));transition:all .35s cubic-bezier(.23,1,.32,1);}
+.canal-card:hover{transform:translateY(-4px);border-color:var(--cc,var(--ouro));}
+.canal-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--cc,var(--ouro));margin-bottom:16px;}
+.canal-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:72px;color:var(--cc,var(--ouro));display:block;line-height:1;}
+.canal-label{font-size:22px;color:var(--cinza-claro);margin-top:4px;display:block;}
+.canal-stats{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.canal-stat{font-size:20px;color:var(--offwhite);display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.canal-stat span{color:var(--cc,var(--ouro));font-weight:500;}
+/* COMPARATIVO */
+.compare-grid{display:grid;grid-template-columns:1fr 70px 1fr;gap:0;align-items:center;margin-top:32px;}
+.compare-col{padding:32px 28px;background:rgba(10,30,40,.8);}
+.compare-col.mes1{border:1px solid rgba(168,152,32,.4);}
+.compare-col.mes2{border:1px solid var(--verde);}
+.compare-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;letter-spacing:1px;margin-bottom:4px;}
+.compare-period{font-size:22px;color:var(--cinza-claro);font-style:italic;margin-bottom:20px;}
+.compare-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.compare-row-label{font-size:24px;color:var(--cinza-claro);}
+.compare-row-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:31px;}
+.arrow-mid{text-align:center;}
+.arrow-icon{font-size:43px;color:var(--ouro);display:block;animation:pulse-arrow 1.8s ease-in-out infinite;}
+.arrow-label{font-family:'Rajdhani',sans-serif;font-size:16px;color:var(--ouro);letter-spacing:2px;margin-top:6px;}
+@keyframes pulse-arrow{0%,100%{transform:scale(1) translateX(0)}50%{transform:scale(1.25) translateX(5px)}}
+/* META TABLES */
+.meta-table{width:100%;border-collapse:collapse;margin-top:24px;}
+.meta-table th{font-family:'Rajdhani',sans-serif;font-size:18px;letter-spacing:1px;color:var(--ouro-esc);text-transform:uppercase;padding:10px 14px;border-bottom:2px solid rgba(168,152,32,.3);text-align:left;}
+.meta-table td{font-size:22px;color:var(--offwhite);padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
+.meta-table tr:hover td{background:rgba(232,212,77,.03);}
+.meta-table .num{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;}
+.badge-ativo{background:rgba(76,175,125,.15);border:1px solid var(--verde);color:var(--verde);font-size:24px;font-family:'Rajdhani',sans-serif;padding:3px 8px;letter-spacing:1px;}
+.badge-desativ{background:rgba(136,136,136,.1);border:1px solid var(--cinza);color:var(--cinza);font-size:24px;font-family:'Rajdhani',sans-serif;padding:3px 8px;letter-spacing:1px;}
+.destaque-box{background:#141408;border:1px solid rgba(232,212,77,.2);padding:18px 22px;margin-top:20px;display:flex;gap:40px;align-items:center;flex-wrap:wrap;}
+.destaque-item{text-align:center;}
+.destaque-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:65px;color:var(--ouro);display:block;}
+.destaque-label{font-size:20px;color:var(--cinza-claro);margin-top:2px;}
+/* LEAD CARDS */
+.leads-list{display:flex;flex-direction:column;gap:10px;margin-top:28px;}
+.lead-card{background:#141408;border:1px solid rgba(255,255,255,.07);border-left:5px solid var(--lc,var(--vermelho));display:grid;grid-template-columns:1fr auto;gap:16px;padding:18px 20px;transition:all .35s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden;}
+.lead-list{display:flex;flex-direction:column;gap:12px;margin-top:28px;}
+.lead-card:hover{transform:translateX(6px);border-color:var(--lc,var(--vermelho));}
+.lead-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:29px;color:var(--lc,var(--vermelho));margin-bottom:4px;}
+.lead-sit{font-size:22px;color:var(--cinza-claro);margin-bottom:5px;line-height:1.4;}
+.lead-acao{font-size:22px;color:var(--offwhite);font-weight:500;line-height:1.4;}
+.lead-acao::before{content:'▶  ';color:var(--cinza);font-size:24px;}
+.badges{display:flex;flex-direction:column;gap:5px;align-items:flex-end;justify-content:center;}
+.badge{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;padding:4px 9px;white-space:nowrap;}
+.badge-r{background:rgba(232,212,77,.1);border:1px solid var(--ouro);color:var(--ouro);}
+.badge-n{background:rgba(74,154,180,.1);border:1px solid var(--azul);color:var(--azul);}
+.badge-ua{background:var(--vermelho);color:#fff;}
+.badge-um{background:rgba(232,148,58,.15);border:1px solid var(--laranja);color:var(--laranja);}
+.badge-ub{background:rgba(74,154,180,.15);border:1px solid var(--azul);color:var(--azul);}
+.badge-re{background:rgba(76,175,125,.1);border:1px solid var(--verde);color:var(--verde);}
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:18px;margin-top:32px;}
+.step-card{background:rgba(10,30,40,.7);border:1px solid rgba(255,255,255,.08);padding:28px 26px;display:grid;grid-template-columns:64px 1fr;gap:22px;align-items:start;overflow:hidden;transition:all .35s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden;}
+.step-card::after{content:'';position:absolute;left:0;bottom:0;width:0;height:3px;background:var(--sc,var(--ouro));transition:width .5s ease;}
+.step-card:hover{transform:translateX(8px);border-color:var(--sc,var(--ouro));}
+.step-card:hover::after{width:100%;}
+.step-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:65px;line-height:1;color:var(--sc,var(--ouro));}
+.step-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:31px;margin-bottom:8px;}
+.step-desc{font-size:24px;color:var(--cinza-claro);line-height:1.65;margin-bottom:8px;}
+.step-meta{font-size:20px;font-style:italic;}
+/* REVEAL */
+.rv{opacity:0;transform:translateY(32px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1);}
+.rv.vis{opacity:1;transform:translateY(0);}
+.rl{opacity:0;transform:translateX(-36px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1);}
+.rl.vis{opacity:1;transform:translateX(0);}
+.rr{opacity:0;transform:translateX(36px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1);}
+.rr.vis{opacity:1;transform:translateX(0);}
+.rs{opacity:0;transform:scale(.88);transition:opacity .7s cubic-bezier(.23,1,.32,1),transform .7s cubic-bezier(.23,1,.32,1);}
+.rs.vis{opacity:1;transform:scale(1);}
+.d1{transition-delay:.08s!important}.d2{transition-delay:.16s!important}.d3{transition-delay:.24s!important}
+.d4{transition-delay:.32s!important}.d5{transition-delay:.40s!important}.d6{transition-delay:.48s!important}
+.d7{transition-delay:.56s!important}.d8{transition-delay:.64s!important}
+footer{background:#080804;border-top:1px solid rgba(168,152,32,.25);padding:22px 72px;display:flex;justify-content:space-between;align-items:center;}
+footer p{font-size:16px;color:var(--ouro-esc);letter-spacing:1px;}
+
+/* ── TABLET (max 900px) ── */
+@media(max-width:900px){
+  .slide{padding:80px 28px 48px;}
+  h1{font-size:clamp(52px,12vw,90px);}
+  h2{font-size:clamp(26px,6vw,42px);}
+  .slide-sub{font-size:24px;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .canal-grid{grid-template-columns:1fr 1fr;}.canal-4-grid{grid-template-columns:1fr 1fr;}
+  .compare-grid{grid-template-columns:1fr;gap:16px;}
+  .arrow-mid{display:none;}
+  nav{padding:14px 20px;}
+  .nav-brand{font-size:13px;letter-spacing:1px;}
+  footer{padding:16px 24px;flex-direction:column;gap:8px;}
+  .destaque-box{grid-template-columns:1fr!important;}
+  .meta-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;}
+  .step-card{grid-template-columns:44px 1fr;gap:14px;padding:20px 18px;overflow:hidden;}
+  .step-num{font-size:43px;}
+  .step-title{font-size:22px;}
+  .step-desc{font-size:18px;}
+}
+
+/* ── MOBILE (max 600px) ── */
+@media(max-width:600px){
+  .slide{padding:72px 16px 40px;min-height:auto;}
+  h1{font-size:clamp(50px,15vw,84px);line-height:.92;}
+  h2{font-size:clamp(29px,8vw,46px);}
+  .slide-sub{font-size:23px;}
+  .tag{font-size:13px;letter-spacing:2px;}
+  .divider{margin:12px 0;}
+  nav{padding:10px 14px;flex-wrap:wrap;gap:6px;}
+  .nav-brand{font-size:12px;letter-spacing:1px;width:100%;}
+  .nav-dots{gap:7px;}
+  .nav-dot{width:8px;height:8px;}
+  .capa-meta{grid-template-columns:1fr;gap:16px;margin-top:28px;}
+  .meta-item p{font-size:20px;}
+  .capa-sub{font-size:20px;}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin:20px 0 16px;}
+  .kpi-card{padding:18px 14px;}
+  .kpi-num{font-size:62px;}
+  .kpi-label{font-size:17px;}
+  .kpi-sub{font-size:14px;}
+  .diag-box{padding:16px 16px;}
+  .diag-box p{font-size:19px;line-height:1.6;}
+  .diag-box strong{font-size:17px;}
+  div[style*="grid-template-columns:1fr 1fr"]{
+    display:flex!important;flex-direction:column!important;gap:12px!important;
+  }
+  .canal-grid{grid-template-columns:1fr;gap:12px;}.canal-4-grid{grid-template-columns:1fr;gap:12px;}
+  .canal-card{padding:20px 16px;}
+  .canal-num{font-size:58px;}
+  .canal-title{font-size:20px;}
+  .canal-label{font-size:18px;}
+  .canal-stat{font-size:16px;}
+  .compare-grid{grid-template-columns:1fr;gap:10px;}
+  .compare-col{padding:20px 16px;}
+  .compare-title{font-size:22px;}
+  .compare-period{font-size:16px;margin-bottom:12px;}
+  .compare-row-label{font-size:18px;}
+  .compare-row-val{font-size:24px;}
+  .meta-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;font-size:16px;}
+  .meta-table th{font-size:13px;padding:8px 10px;}
+  .meta-table td{font-size:16px;padding:8px 10px;}
+  .meta-table .num{font-size:19px;}
+  .destaque-box{
+    display:flex!important;flex-direction:column!important;
+    padding:0!important;gap:0!important;
+  }
+  .destaque-box > div{padding:16px 18px!important;}
+  .destaque-num{font-size:46px!important;}
+  .destaque-label{font-size:16px!important;}
+  .lead-card{grid-template-columns:1fr;gap:10px;padding:14px 14px;}
+  .lead-name{font-size:23px;}
+  .lead-sit{font-size:16px;}
+  .lead-acao{font-size:16px;}
+  .badges{flex-direction:row;flex-wrap:wrap;gap:4px;justify-content:flex-start;}
+  .badge{font-size:11px;padding:3px 7px;}
+  .step-card{display:flex;flex-direction:column;gap:8px;padding:16px 14px;}.step-num{align-self:flex-start;line-height:1;margin-bottom:0;}
+  .step-num{font-size:41px;line-height:1;display:block;}
+  .step-title{font-size:22px;margin-bottom:6px;}
+  .step-desc{font-size:17px;line-height:1.55;}
+  footer{padding:14px 16px;flex-direction:column;gap:6px;text-align:center;}
+  footer p{font-size:13px;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="cursor-dot" id="cdot"></div>
+<div class="cursor-ring" id="cring"></div>
+<div id="progress"></div>
+<nav>
+  <span class="nav-brand">@brunopro.tech  ·  Ótica Herval Select</span>
+  <div class="nav-dots" id="nav-dots"></div>
+</nav>
+<section class="slide" id="slide-1" data-slide="1">
+  <div class="scan-line"></div>
+  <div class="slide-inner">
+    <div class="rv d1"><p class="tag">Relatório Semanal · Visão Gerencial</p><div class="divider" style="width:140px;margin:12px 0;"></div></div>
+    <div class="rv d2"><h1>ÓTICA HERVAL<br><em>SELECT</em></h1></div>
+    <div class="rv d3"><p class="capa-sub">CRM Automatizado · Assistente Clara · Fila de Reativação</p></div>
+    <div class="capa-meta">
+      <div class="meta-item rv d4"><label>Período</label><p>03 a 09 de Agosto de 2026 (7 dias)</p></div>
+      <div class="meta-item rv d5"><label>Preparado por</label><p>Bruno · @brunopro.tech</p></div>
+      <div class="meta-item rv d6" style="grid-column:1/-1"><label>Para</label><p>Léo e James · Sócios, Ótica Herval Select · Maringá/PR</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-2" data-slide="2">
+  <div class="slide-inner">
+    <div class="rv"><h2>Painel Geral</h2><p class="slide-sub">03 a 09 de agosto de 2026 · dados ao vivo do CRM</p><div class="divider"></div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card rs d1" style="--ka:var(--ouro)"><span class="kpi-num" data-target="47">0</span><span class="kpi-label">Leads Registrados</span><span class="kpi-sub">Total no período</span></div>
+      <div class="kpi-card rs d2" style="--ka:var(--azul)"><span class="kpi-num" data-target="13">0</span><span class="kpi-label">Responderam</span><span class="kpi-sub">28% do total</span></div>
+      <div class="kpi-card rs d3" style="--ka:var(--laranja)"><span class="kpi-num" data-target="5">0</span><span class="kpi-label">Leads com Receita</span><span class="kpi-sub">Já qualificados, prontos p/ orçamento</span></div>
+      <div class="kpi-card rs d4" style="--ka:var(--vermelho)"><span class="kpi-num" data-target="1">0</span><span class="kpi-label">Avançaram no Funil</span><span class="kpi-sub">Foram pra Negociação</span></div>
+    </div>
+    <div class="diag-box rv d5">
+      <strong>DIAGNÓSTICO DA SEMANA:</strong>
+      <p>5 já têm receita em mãos. O maior ponto de atenção não é essa semana isolada, é o acumulado: alguns contatos de julho precisam ser reativados (próximos slides).</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-3" data-slide="3">
+  <div class="slide-inner">
+    <div class="rv"><span class="tag">① Prioridade Máxima</span><h2>Negociação Parada</h2><p class="slide-sub">33 leads com orçamento enviado, sem fechamento — a maioria de julho, ainda esperando retorno</p><div class="divider"></div></div>
+    <p class="slide-sub rv" style="font-size:15px;font-style:italic;margin-top:-8px;margin-bottom:8px">Esta lista não é só desta semana — é o acumulado de todo mundo parado em Negociação agora. É a fila real de trabalho da vendedora.</p>
+    <div class="lead-list">
+      <div class="lead-card rv d1" style="--lc:var(--vermelho)"><div><p class="lead-name">silene</p><a href="https://wa.me/554488450695?text=Oi%20silene%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554488450695</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi silene! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--vermelho)"><div><p class="lead-name">freirerosimeiry@gmail.com</p><a href="https://wa.me/554499052014?text=Oi%20freirerosimeiry%40gmail.com%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499052014</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi freirerosimeiry@gmail.com, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--vermelho)"><div><p class="lead-name">Edyson Gomes Lago</p><a href="https://wa.me/556892264833?text=Oi%20Edyson%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  556892264833</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Edyson! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d4" style="--lc:var(--vermelho)"><div><p class="lead-name">D.Tay ☘️🌹</p><a href="https://wa.me/554598137485?text=Oi%20D.Tay%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554598137485</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi D.Tay, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d5" style="--lc:var(--vermelho)"><div><p class="lead-name">José Lucas Freitas</p><a href="https://wa.me/554491753873?text=Oi%20Jos%C3%A9%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554491753873</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi José! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d6" style="--lc:var(--vermelho)"><div><p class="lead-name">Carlos Nunes Pereira</p><a href="https://wa.me/554499169981?text=Oi%20Carlos%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499169981</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Carlos! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d7" style="--lc:var(--vermelho)"><div><p class="lead-name">Andressa Carvalho</p><a href="https://wa.me/5511996980931?text=Oi%20Andressa%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  5511996980931</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Andressa, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d8" style="--lc:var(--vermelho)"><div><p class="lead-name">⚖️Daiana❤️</p><a href="https://wa.me/554498521549?text=Oi%20%E2%9A%96%EF%B8%8FDaiana%E2%9D%A4%EF%B8%8F%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498521549</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi ⚖️Daiana❤️! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d1" style="--lc:var(--vermelho)"><div><p class="lead-name">😁</p><a href="https://wa.me/556799283829?text=Oi%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  556799283829</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--vermelho)"><div><p class="lead-name">Gratidão Sempre</p><a href="https://wa.me/5521995470619?text=Oi%20Gratid%C3%A3o%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  5521995470619</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Gratidão! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--vermelho)"><div><p class="lead-name">Isabela Leal ✨</p><a href="https://wa.me/554491384836?text=Oi%20Isabela%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554491384836</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Isabela! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d4" style="--lc:var(--vermelho)"><div><p class="lead-name">Angela Réia</p><a href="https://wa.me/554484082059?text=Oi%20Angela%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554484082059</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Angela, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d5" style="--lc:var(--vermelho)"><div><p class="lead-name">Flavia Bergamaschi</p><a href="https://wa.me/554499122001?text=Oi%20Flavia%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499122001</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Flavia! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d6" style="--lc:var(--vermelho)"><div><p class="lead-name">Sandra Sales</p><a href="https://wa.me/554499839801?text=Oi%20Sandra%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499839801</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Sandra, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d7" style="--lc:var(--vermelho)"><div><p class="lead-name">Eder Coelho</p><a href="https://wa.me/554499649789?text=Oi%20Eder%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499649789</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Eder! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d8" style="--lc:var(--vermelho)"><div><p class="lead-name">Liz ✨️</p><a href="https://wa.me/554498204168?text=Oi%20Liz%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498204168</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Liz! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d1" style="--lc:var(--vermelho)"><div><p class="lead-name">Ana Paula Loni</p><a href="https://wa.me/554499333665?text=Oi%20Ana%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499333665</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Ana, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--vermelho)"><div><p class="lead-name">Grazieli Brustolin</p><a href="https://wa.me/554498208605?text=Oi%20Grazieli%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498208605</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Grazieli! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--vermelho)"><div><p class="lead-name">Elisa Mara Bernardi</p><a href="https://wa.me/554498788741?text=Oi%20Elisa%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498788741</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Elisa, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d4" style="--lc:var(--azul)"><div><p class="lead-name">Juliana Vitali</p><a href="https://wa.me/554499416464?text=Oi%20Juliana%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499416464</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Juliana! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d5" style="--lc:var(--vermelho)"><div><p class="lead-name">😒</p><a href="https://wa.me/554498521051?text=Oi%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498521051</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d6" style="--lc:var(--azul)"><div><p class="lead-name">Chris 🌻</p><a href="https://wa.me/554499702450?text=Oi%20Chris%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499702450</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Chris, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d7" style="--lc:var(--vermelho)"><div><p class="lead-name">Andreia</p><a href="https://wa.me/554499361953?text=Oi%20Andreia%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499361953</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Andreia! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d8" style="--lc:var(--vermelho)"><div><p class="lead-name">Ju Couto 😪</p><a href="https://wa.me/554497468184?text=Oi%20Ju%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554497468184</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Ju, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d1" style="--lc:var(--azul)"><div><p class="lead-name">Dulce</p><a href="https://wa.me/554499092198?text=Oi%20Dulce%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499092198</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Dulce! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--azul)"><div><p class="lead-name">Drielly Valle</p><a href="https://wa.me/554499826925?text=Oi%20Drielly%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554499826925</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Drielly! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--vermelho)"><div><p class="lead-name">Regina</p><a href="https://wa.me/554488310340?text=Oi%20Regina%2C%20tudo%20bem%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicou%20faltando%20saber%20de%20voc%C3%AA%20%E2%80%94%20j%C3%A1%20resolveu%20a%20quest%C3%A3o%20dos%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ACaso%20ainda%20n%C3%A3o%2C%20e%20se%20voc%C3%AA%20j%C3%A1%20tiver%20outra%20cota%C3%A7%C3%A3o%20na%20m%C3%A3o%2C%20me%20manda%20o%20print%20dela.%0AVou%20ver%20o%20que%20consigo%20fazer%20pra%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20fechar." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554488310340</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Regina, tudo bem? Aqui é da Ótica Herval Select.
+
+Ficou faltando saber de você — já resolveu a questão dos óculos em outro lugar?
+
+Caso ainda não, e se você já tiver outra cotação na mão, me manda o print dela.
+Vou ver o que consigo fazer pra te dar uma condição melhor antes de você fechar.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d4" style="--lc:var(--vermelho)"><div><p class="lead-name">Rosangela</p><a href="https://wa.me/554498353079?text=Oi%20Rosangela%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0APassando%20aqui%20pra%20saber%20se%20voc%C3%AA%20j%C3%A1%20providenciou%20os%20%C3%B3culos%20por%20outra%20%C3%B3tica.%0A%0ASe%20ainda%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20cotado%20em%20algum%20outro%20lugar%2C%20me%20manda%20o%20print%20ou%20foto%20da%20cota%C3%A7%C3%A3o.%0AVou%20tentar%20te%20dar%20uma%20condi%C3%A7%C3%A3o%20melhor%20antes%20de%20voc%C3%AA%20decidir." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498353079</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Rosangela! Aqui é da Ótica Herval Select.
+
+Passando aqui pra saber se você já providenciou os óculos por outra ótica.
+
+Se ainda não, e se já tiver cotado em algum outro lugar, me manda o print ou foto da cotação.
+Vou tentar te dar uma condição melhor antes de você decidir.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d5" style="--lc:var(--vermelho)"><div><p class="lead-name">😘😘😘</p><a href="https://wa.me/554491422529?text=Oi%2C%20tudo%20certo%3F%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AQueria%20confirmar%3A%20voc%C3%AA%20chegou%20a%20fechar%20os%20%C3%B3culos%20em%20outra%20loja%3F%0A%0ASe%20n%C3%A3o%2C%20e%20se%20j%C3%A1%20tiver%20algum%20or%C3%A7amento%20em%20m%C3%A3os%2C%20me%20manda%20a%20foto%20ou%20o%20print%20dele%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20bater%20esse%20pre%C3%A7o." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554491422529</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi, tudo certo? Aqui é da Ótica Herval Select.
+
+Queria confirmar: você chegou a fechar os óculos em outra loja?
+
+Se não, e se já tiver algum orçamento em mãos, me manda a foto ou o print dele antes de fechar — vou tentar bater esse preço.</div></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d6" style="--lc:var(--cinza)"><div><p class="lead-name">Regina Marques — Representante Seara</p><a href="https://wa.me/554491816147" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9181-6147</a></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d7" style="--lc:var(--cinza)"><div><p class="lead-name">Diego Matheus</p><a href="https://wa.me/554497214321" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9721-4321</a></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d8" style="--lc:var(--cinza)"><div><p class="lead-name">Guiomar Ferreira De Olive</p><a href="https://wa.me/554491676798?text=Oi%20Guiomar%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AS%C3%B3%20pra%20confirmar%3A%20voc%C3%AA%20j%C3%A1%20comprou%20seus%20%C3%B3culos%20em%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%20nada%20e%20tiver%20cota%C3%A7%C3%A3o%20de%20outra%20%C3%B3tica%2C%20me%20manda%20o%20print%20dela%20antes.%0AVou%20tentar%20conseguir%20um%20pre%C3%A7o%20melhor%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554491676798</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Guiomar! Aqui é da Ótica Herval Select.
+
+Só pra confirmar: você já comprou seus óculos em outro lugar?
+
+Se ainda não fechou nada e tiver cotação de outra ótica, me manda o print dela antes.
+Vou tentar conseguir um preço melhor pra você.</div></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d1" style="--lc:var(--vermelho)"><div><p class="lead-name">Janaina Morari</p><a href="https://wa.me/554498775900?text=Oi%20Janaina%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVi%20que%20voc%C3%AA%20tinha%20pedido%20um%20or%C3%A7amento%20com%20a%20gente.%0AVoc%C3%AA%20j%C3%A1%20comprou%20os%20%C3%B3culos%20em%20algum%20outro%20lugar%3F%0A%0ASe%20ainda%20n%C3%A3o%20fechou%2C%20voc%C3%AA%20chegou%20a%20pegar%20outra%20cota%C3%A7%C3%A3o%3F%0ASe%20tiver%2C%20me%20manda%20uma%20foto%20ou%20print%20dela%20antes%20de%20fechar%20%E2%80%94%20vou%20tentar%20cobrir%20o%20pre%C3%A7o%20pra%20voc%C3%AA." target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem  ·  554498775900</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Janaina! Aqui é da Ótica Herval Select.
+
+Vi que você tinha pedido um orçamento com a gente.
+Você já comprou os óculos em algum outro lugar?
+
+Se ainda não fechou, você chegou a pegar outra cotação?
+Se tiver, me manda uma foto ou print dela antes de fechar — vou tentar cobrir o preço pra você.</div></div><div class="badges"><span class="badge badge-um">URG: MÉDIA</span></div></div>
+    </div>
+    <p class="slide-sub" style="margin-top:16px;font-size:15px;font-style:italic">Nota: Regina Marques (Representante Seara) e Diego Matheus parecem contato comercial/fornecedor, não lead de cliente — vale conferir com a vendedora antes de tratar como venda perdida.</p>
+  </div>
+</section>
+
+<section class="slide bg-petroleo" id="slide-4" data-slide="4">
+  <div class="slide-inner">
+    <div class="rv"><span class="tag">② Prioridade Alta</span><h2>Visita Sem Retorno</h2><p class="slide-sub">9 leads que confirmaram visita mas não temos registro de retorno</p><div class="divider"></div></div>
+    <div class="lead-list">
+      <div class="lead-card rv d1" style="--lc:var(--laranja)"><div><p class="lead-name">Elaine Ca</p><a href="https://wa.me/554498749148" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9874-9148</a></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--laranja)"><div><p class="lead-name">Décio Gongora</p><a href="https://wa.me/554499747526" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9974-7526</a></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--laranja)"><div><p class="lead-name">sandra</p><a href="https://wa.me/554499437166" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9943-7166</a></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d4" style="--lc:var(--azul)"><div><p class="lead-name">Anamaria</p><a href="https://wa.me/554499365661" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9936-5661</a></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d5" style="--lc:var(--laranja)"><div><p class="lead-name">Jerusa Marques Fonseca</p><a href="https://wa.me/554497488887" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9748-8887</a></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d6" style="--lc:var(--laranja)"><div><p class="lead-name">Maura Marciliano Lemos</p><a href="https://wa.me/554498210809" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9821-0809</a></div><div class="badges"><span class="badge badge-ua">URG: ALTA</span></div></div>
+      <div class="lead-card rv d7" style="--lc:var(--ouro)"><div><p class="lead-name">Damares Santop</p><a href="https://wa.me/554488162542" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 8816-2542</a></div><div class="badges"><span class="badge badge-um">URG: MÉDIA</span></div></div>
+      <div class="lead-card rv d8" style="--lc:var(--azul)"><div><p class="lead-name">Giovanna</p><a href="https://wa.me/554488375303" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 8837-5303</a></div><div class="badges"><span class="badge badge-ub">URG: BAIXA</span></div></div>
+      <div class="lead-card rv d1" style="--lc:var(--cinza)"><div><p class="lead-name">Dany Alves</p><a href="https://wa.me/554499581493" target="_blank" style="font-size:14px;color:var(--verde);display:block;margin:3px 0;text-decoration:none;">📱 (44) 9958-1493</a></div><div class="badges"></div></div>
+    </div>
+    <p class="slide-sub" style="margin-top:16px;font-size:15px;font-style:italic">Nota: "Top Vision" foi tirado dessa lista de propósito — é fornecedor, não cliente.</p>
+  </div>
+</section>
+
+<section class="slide" id="slide-5" data-slide="5">
+  <div class="slide-inner">
+    <div class="rv"><span class="tag">③ Aquecer</span><h2>Pré-Atendimento Qualificado</h2><p class="slide-sub">3 leads desta semana já têm receita e orçamento discutido, mas a conversa parou</p><div class="divider"></div></div>
+    <div class="lead-list">
+      <div class="lead-card rv d1" style="--lc:var(--laranja)"><div><p class="lead-name">Fernando  ·  7 dias aguardando</p><a href="https://wa.me/554991870972?text=Oi%20Fernando%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AA%20gente%20ficou%20de%20te%20explicar%20a%20diferen%C3%A7a%20entre%20as%20lentes%20e%20a%20mensagem%20cortou%20no%20meio%2C%20desculpa%21%0A%0ACom%20a%20promo%C3%A7%C3%A3o%20de%2050%25%20nas%20lentes%20ZEISS%2C%20a%20multifocal%20sai%20a%20partir%20de%20R%24800%20%28chega%20a%20R%246-7%20mil%20sem%20desconto%29.%20Quer%20que%20eu%20te%20passe%20o%20valor%20certinho%20pro%20seu%20caso%3F" target="_blank" style="font-size:15px;color:var(--verde);font-weight:600;display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Fernando! Aqui é da Ótica Herval Select.
+
+A gente ficou de te explicar a diferença entre as lentes e a mensagem cortou no meio, desculpa!
+
+Com a promoção de 50% nas lentes ZEISS, a multifocal sai a partir de R$800 (chega a R$6-7 mil sem desconto). Quer que eu te passe o valor certinho pro seu caso?</div></div><div class="badges"><span class="badge badge-re">RECEITA ✓</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--laranja)"><div><p class="lead-name">Maria  ·  3 dias aguardando</p><a href="https://wa.me/554499093351?text=Oi%20Maria%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AFicamos%20aguardando%20seu%20retorno%20sobre%20o%20or%C3%A7amento%20das%20lentes%20%28R%24699%20a%20R%24897%29.%0A%0AVoc%C3%AA%20j%C3%A1%20fechou%20em%20algum%20outro%20lugar%3F%20Se%20sim%2C%20me%20manda%20o%20valor%20que%20conseguiu%20que%20eu%20vejo%20se%20d%C3%A1%20pra%20melhorar%20pra%20voc%C3%AA." target="_blank" style="font-size:15px;color:var(--verde);font-weight:600;display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Maria! Aqui é da Ótica Herval Select.
+
+Ficamos aguardando seu retorno sobre o orçamento das lentes (R$699 a R$897).
+
+Você já fechou em algum outro lugar? Se sim, me manda o valor que conseguiu que eu vejo se dá pra melhorar pra você.</div></div><div class="badges"><span class="badge badge-re">RECEITA ✓</span></div></div>
+      <div class="lead-card rv d3" style="--lc:var(--verde)"><div><p class="lead-name">Betinho  ·  algumas horas</p><a href="https://wa.me/554491521432?text=Oi%20Betinho%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0ATe%20passamos%20o%20valor%20promocional%20da%20lente%20%28R%24550%2C%20at%C3%A9%2016/08%29.%0A%0AVoc%C3%AA%20j%C3%A1%20fechou%20em%20outro%20lugar%3F%20Se%20sim%2C%20me%20manda%20o%20valor%20que%20voc%C3%AA%20conseguiu%2C%20que%20talvez%20eu%20consiga%20cobrir." target="_blank" style="font-size:15px;color:var(--verde);font-weight:600;display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Betinho! Aqui é da Ótica Herval Select.
+
+Te passamos o valor promocional da lente (R$550, até 16/08).
+
+Você já fechou em outro lugar? Se sim, me manda o valor que você conseguiu, que talvez eu consiga cobrir.</div></div><div class="badges"><span class="badge badge-re">RECEITA ✓</span></div></div>
+    </div>
+    <div class="diag-box rv d4" style="margin-top:20px">
+      <strong>NOTA</strong>
+      <p>Outros 2 leads dessa mesma leva (Ana e Nivia) já avançaram mais — foram pro slide seguinte, de confirmação de visita, porque a situação delas é diferente: já sinalizaram que vêm na loja.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide bg-petroleo" id="slide-6" data-slide="6">
+  <div class="slide-inner">
+    <div class="rv"><span class="tag">Marcar Visita</span><h2>Já Sinalizaram Interesse em Vir na Loja</h2><p class="slide-sub">2 leads que pediram endereço ou disseram que vinham — o objetivo aqui é marcar o dia, não perguntar "se" elas vêm</p><div class="divider"></div></div>
+    <div class="lead-list">
+      <div class="lead-card rv d1" style="--lc:var(--azul)"><div><p class="lead-name">Ana  ·  3 dias aguardando</p><a href="https://wa.me/554497189802?text=Oi%20Ana%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0AVoc%C3%AA%20comentou%20que%20ia%20preferir%20vir%20na%20loja%20pra%20ver%20as%20arma%C3%A7%C3%B5es.%0A%0AQual%20dia%20fica%20melhor%20pra%20voc%C3%AA%20vir%3F%20J%C3%A1%20deixo%20reservado%20um%20hor%C3%A1rio%20com%20o%20Gustavo%20pra%20te%20atender%20direitinho." target="_blank" style="font-size:15px;color:var(--verde);font-weight:600;display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Ana! Aqui é da Ótica Herval Select.
+
+Você comentou que ia preferir vir na loja pra ver as armações.
+
+Qual dia fica melhor pra você vir? Já deixo reservado um horário com o Gustavo pra te atender direitinho.</div></div><div class="badges"><span class="badge badge-re">RECEITA ✓</span></div></div>
+      <div class="lead-card rv d2" style="--lc:var(--laranja)"><div><p class="lead-name">Nivia  ·  3 dias aguardando</p><a href="https://wa.me/554491422529?text=Oi%20Nivia%21%20Aqui%20%C3%A9%20da%20%C3%93tica%20Herval%20Select.%0A%0ASim%2C%20somos%20de%20Maring%C3%A1%2C%20na%20Av.%20Herval%2C%20669%20-%20Zona%2001%21%0A%0AQual%20dia%20fica%20bom%20pra%20voc%C3%AA%20passar%20aqui%20e%20experimentar%20aquelas%20arma%C3%A7%C3%B5es%20quadradinhas%20que%20voc%C3%AA%20gostou%3F%20J%C3%A1%20deixo%20separado%20pra%20voc%C3%AA." target="_blank" style="font-size:15px;color:var(--verde);font-weight:600;display:block;margin:3px 0;text-decoration:none;">💬 Mandar mensagem</a><div class="lead-sit" style="margin-top:8px;font-size:14px;color:#c9d6da;background:rgba(255,255,255,.04);border-left:2px solid var(--verde);padding:8px 10px;border-radius:4px;white-space:pre-line;max-width:480px;">Oi Nivia! Aqui é da Ótica Herval Select.
+
+Sim, somos de Maringá, na Av. Herval, 669 - Zona 01!
+
+Qual dia fica bom pra você passar aqui e experimentar aquelas armações quadradinhas que você gostou? Já deixo separado pra você.</div></div><div class="badges"><span class="badge badge-re">RECEITA ✓</span></div></div>
+    </div>
+    <div class="diag-box rv d3" style="margin-top:20px;border-left-color:var(--laranja)">
+      <strong style="color:var(--laranja)">NOTA SOBRE A NIVIA</strong>
+      <p>A Jornada dela no CRM já está como "Negociação" — ela avançou de verdade, está conversando com o Gustavo sobre armações. Ficou aqui porque a ação imediata é a mesma (marcar visita), mas o card dela no CRM já não é mais Pré-Atendimento.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide bg-petroleo azul-accent" id="slide-7" data-slide="7">
+  <div class="slide-inner">
+    <div class="rv"><h2>Próximos Passos</h2><div class="divider"></div></div>
+    <div class="steps">
+      <div class="step-card rl d1">
+        <span class="step-num">01</span>
+        <div><div class="step-title">Trabalhar a fila de Negociação Parada</div><p class="step-desc">33 pessoas com orçamento já enviado, muitas desde julho. É o maior volume de venda represada que a gente tem hoje.</p></div>
+      </div>
+      <div class="step-card rl d2">
+        <span class="step-num">02</span>
+        <div><div class="step-title">Confirmar as 9 visitas sem retorno</div><p class="step-desc">Descobrir se vieram, compraram, ou sumiram — pra decidir se reativa ou marca como perdida.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>@brunopro.tech  ·  Ótica Herval Select  ·  Relatório Semanal 03-09/08/2026</p>
+  <p>Gestão de Automação com IA  ·  v2.0</p>
+</footer>
+<script>
+const cdot=document.getElementById('cdot'),cring=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cdot.style.left=mx+'px';cdot.style.top=my+'px';});
+function animCursor(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cring.style.left=rx+'px';cring.style.top=ry+'px';requestAnimationFrame(animCursor);}
+animCursor();
+document.querySelectorAll('.kpi-card,.lead-card,.step-card,.canal-card,.nav-dot').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cring.style.transform='translate(-50%,-50%) scale(1.8)';cring.style.opacity='.9';});
+  el.addEventListener('mouseleave',()=>{cring.style.transform='translate(-50%,-50%) scale(1)';cring.style.opacity='.6';});
+});
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,pts=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+class Pt{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.r=Math.random()*1.6+.4;this.alpha=Math.random()*.2+.04;this.color=Math.random()>.5?'232,212,77':'74,154,180';}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=`rgba(${this.color},${this.alpha})`;ctx.fill();}}
+for(let i=0;i<100;i++)pts.push(new Pt());
+function drawLines(){for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(232,212,77,${.035*(1-d/90)})`;ctx.lineWidth=.5;ctx.stroke();}}}
+function animPts(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.update();p.draw();});drawLines();requestAnimationFrame(animPts);}
+animPts();
+window.addEventListener('scroll',()=>{const el=document.getElementById('progress');const h=document.documentElement.scrollHeight-window.innerHeight;el.style.width=(window.scrollY/h*100)+'%';});
+const slides=document.querySelectorAll('.slide');
+const dotsC=document.getElementById('nav-dots');
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='nav-dot'+(i===0?' active':'');d.addEventListener('click',()=>document.getElementById('slide-'+(i+1)).scrollIntoView({behavior:'smooth'}));dotsC.appendChild(d);});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.rv,.rl,.rr,.rs').forEach(el=>el.classList.add('vis'));const idx=parseInt(e.target.dataset.slide)-1;document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));e.target.querySelectorAll('[data-target]').forEach(el=>{if(el.dataset.counted)return;el.dataset.counted=1;const t=parseInt(el.dataset.target);let c=0;const s=Math.max(1,Math.ceil(t/50));const ti=setInterval(()=>{c=Math.min(c+s,t);el.textContent=c;if(c>=t)clearInterval(ti);},28);});}});},{threshold:.12});
+slides.forEach(s=>obs.observe(s));
+document.querySelectorAll('.rv,.rl,.rr,.rs').forEach(el=>el.classList.add('vis'));
+const h1=document.querySelector('h1');
+if(h1){h1.addEventListener('mouseenter',()=>{h1.style.animation='gh .4s steps(2) 2';});h1.addEventListener('animationend',()=>{h1.style.animation='';});}
+const st=document.createElement('style');
+st.textContent='@keyframes gh{0%{text-shadow:3px 0 var(--azul),-3px 0 var(--vermelho);clip-path:inset(10% 0 85% 0)}25%{text-shadow:-4px 0 var(--azul),4px 0 var(--vermelho);clip-path:inset(50% 0 30% 0)}50%{text-shadow:3px 0 var(--verde),-3px 0 var(--ouro);clip-path:inset(80% 0 5% 0)}75%{text-shadow:-2px 0 var(--azul),2px 0 var(--vermelho);clip-path:inset(5% 0 70% 0)}100%{text-shadow:none;clip-path:none}}';
+document.head.appendChild(st);
+</script>
+</body>
+</html>
