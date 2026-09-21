@@ -201,6 +201,13 @@ footer p{font-size:16px;color:var(--ouro-esc);letter-spacing:1px;}
   .destaque-box > div{padding:16px 18px!important;}
   .destaque-num{font-size:46px!important;}
   .destaque-label{font-size:16px!important;}
+  .destaque-box-row{
+    display:flex!important;flex-direction:row!important;
+    padding:10px 4px!important;gap:0!important;
+  }
+  .destaque-box-row > div{padding:6px 4px!important;flex:1 1 0;min-width:0;}
+  .destaque-box-row .destaque-num{font-size:26px!important;white-space:nowrap;}
+  .destaque-box-row .destaque-label{font-size:11px!important;line-height:1.25;}
   .lead-card{grid-template-columns:1fr;gap:10px;padding:14px 14px;}
   .lead-name{font-size:23px;}
   .lead-sit{font-size:16px;}
@@ -248,7 +255,7 @@ footer p{font-size:16px;color:var(--ouro-esc);letter-spacing:1px;}
       <div class="kpi-card rs d3" style="--ka:var(--laranja)"><span class="kpi-num" data-target="8">0</span><span class="kpi-label">Leads com Receita</span><span class="kpi-sub">Já qualificados, prontos p/ orçamento</span></div>
       <div class="kpi-card rs d4" style="--ka:var(--vermelho)"><span class="kpi-num" data-target="3">0</span><span class="kpi-label">Avançaram no Funil</span><span class="kpi-sub">Foram pra Negociação</span></div>
     </div>
-    <div class="destaque-box rv d4">
+    <div class="destaque-box destaque-box-row rv d4">
       <div class="destaque-item"><span class="destaque-num">R$206,76</span><span class="destaque-label">Investido na semana</span></div>
       <div class="destaque-item"><span class="destaque-num">14</span><span class="destaque-label">Leads reais confirmados (CRM)</span></div>
       <div class="destaque-item"><span class="destaque-num">R$14,77</span><span class="destaque-label">Custo por lead (base CRM)</span></div>
